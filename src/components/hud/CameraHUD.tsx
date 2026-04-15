@@ -26,13 +26,13 @@ export const CameraHUD: React.FC<CameraHUDProps> = ({
     return (
         <div
             ref={hudRef}
-            className={`fixed top-6 right-6 z-[10002] transition-all duration-700 pointer-events-auto flex flex-col shadow-[0_20px_60px_rgba(0,0,0,0.08)] rounded-[28px] ${systemStage === 'test' ? 'w-64 md:w-80' : 'w-48 md:w-72'}`}
+            className={`fixed top-3 right-3 sm:top-6 sm:right-6 z-[10002] transition-all duration-700 pointer-events-auto flex flex-col rounded-[18px] sm:rounded-[28px] shadow-[0_20px_60px_rgba(0,0,0,0.08)] ${systemStage === 'test' ? 'w-40 sm:w-64 md:w-80' : 'w-32 sm:w-48 md:w-72'}`}
             onMouseDown={onMouseDown}
         >
-            <div className="h-14 flex items-center px-6 justify-between relative rounded-t-[28px] border-x border-t border-white/40 bg-gradient-to-b from-white/80 to-white/50 backdrop-blur-xl">
+            <div className="h-10 sm:h-14 flex items-center px-3 sm:px-6 justify-between relative rounded-t-[18px] sm:rounded-t-[28px] border-x border-t border-white/40 bg-gradient-to-b from-white/80 to-white/50 backdrop-blur-xl">
                 <TrackingStatus isTrackingLost={isTrackingLost} stabilityScore={stabilityScore} systemStage={systemStage} />
             </div>
-            <div className="relative aspect-video overflow-hidden border-x border-b border-white/40 bg-white/40 backdrop-blur-md rounded-b-[28px] p-1">
+            <div className="relative aspect-video overflow-hidden border-x border-b border-white/40 bg-white/40 backdrop-blur-md rounded-b-[18px] sm:rounded-b-[28px] p-1">
                 <div className="w-full h-full overflow-hidden rounded-[20px]">
                     <WebcamFeed
                         onFrame={onFrame}
