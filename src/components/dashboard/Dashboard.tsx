@@ -147,10 +147,54 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 </div>
 
                 {/* Image Viewer + Action Panel */}
-                <div className="lg:col-span-8 xl:col-span-9 flex flex-col gap-4">
-                    <div className="flex-1 bg-white rounded-2xl border border-[#E2E8F0] shadow-[0_4px_12px_rgba(0,0,0,0.04)] overflow-hidden flex flex-col min-h-[500px]">
-                        <ImageViewer image={activePatient.image} imgScale={imgScale} imgOffset={imgOffset} />
-                        <ActionPanel onRunAnalysis={onRunAnalysis} onReset={onResetView} />
+                <div className="lg:col-span-8 xl:col-span-9 flex flex-col gap-5">
+
+                    <div className="
+        flex-1 flex flex-col 
+        min-h-[420px] sm:min-h-[480px] lg:min-h-[520px]
+
+        rounded-[20px] sm:rounded-[28px]
+
+        bg-gradient-to-b from-white/90 to-white/70
+        backdrop-blur-xl
+
+        border border-white/40
+        shadow-[0_10px_40px_rgba(15,23,42,0.06)]
+
+        overflow-hidden
+        transition-all duration-300
+        hover:shadow-[0_20px_60px_rgba(15,23,42,0.08)]
+    ">
+
+                        {/* Image Area */}
+                        <div className="flex-1 relative bg-gradient-to-br from-slate-50 to-slate-100/60">
+
+                            {/* subtle inner glow */}
+                            <div className="absolute inset-0 bg-white/20 pointer-events-none" />
+
+                            <ImageViewer
+                                image={activePatient.image}
+                                imgScale={imgScale}
+                                imgOffset={imgOffset}
+                            />
+                        </div>
+
+                        {/* Divider (premium subtle line) */}
+                        <div className="h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
+
+                        {/* Action Panel */}
+                        <div className="
+            px-4 sm:px-6 py-3 sm:py-4
+
+            bg-white/60 backdrop-blur-xl
+
+            border-t border-white/30
+        ">
+                            <ActionPanel
+                                onRunAnalysis={onRunAnalysis}
+                                onReset={onResetView}
+                            />
+                        </div>
                     </div>
                 </div>
             </main>

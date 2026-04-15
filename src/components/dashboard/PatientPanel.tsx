@@ -1,5 +1,5 @@
 import React from 'react';
-import { Activity, ChevronLeft, ChevronRight, Droplets, Heart, Thermometer, User } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Droplets, Heart, Thermometer, User } from 'lucide-react';
 import { motion } from 'motion/react';
 import { Patient } from '../../constants/patients';
 
@@ -11,10 +11,10 @@ interface PatientPanelProps {
 
 const conditionColor = (condition: string) => {
     switch (condition.toLowerCase()) {
-        case 'critical': return 'bg-red-50 text-red-600 border-red-100';
-        case 'recovering': return 'bg-amber-50 text-amber-600 border-amber-100';
-        case 'observation': return 'bg-blue-50 text-blue-600 border-blue-100';
-        default: return 'bg-green-50 text-green-600 border-green-100';
+        case 'critical': return 'bg-red-50 text-red-600 border-red-200';
+        case 'recovering': return 'bg-amber-50 text-amber-600 border-amber-200';
+        case 'observation': return 'bg-blue-50 text-blue-600 border-blue-200';
+        default: return 'bg-green-50 text-green-600 border-green-200';
     }
 };
 
@@ -23,37 +23,86 @@ export const PatientPanel: React.FC<PatientPanelProps> = ({
     onPrev,
     onNext
 }) => {
-    return (
-        <div className="bg-white rounded-2xl border border-[#E2E8F0] shadow-[0_4px_12px_rgba(0,0,0,0.04)] overflow-hidden flex flex-col h-full">
 
-            {/* Panel Header */}
-            <div className="px-5 py-4 border-b border-[#E2E8F0]">
-                <p className="text-xs font-semibold text-[#64748B] tracking-wide uppercase">Patient Directory</p>
+    const generateECGPath = () => {
+        let path = "M0 20 ";
+        let x = 0;
+
+        while (x < 300) {
+            // baseline
+            path += `L${x + 10} 20 `;
+
+            // small bump
+            path += `L${x + 15} 18 `;
+
+            // spike (heartbeat)
+            path += `L${x + 20} 5 `;
+            path += `L${x + 25} 35 `;
+            path += `L${x + 30} 20 `;
+
+            // recovery
+            path += `L${x + 40} 20 `;
+
+            x += 50;
+        }
+
+        return path;
+    };
+    const getECGDuration = (hr: number) => {
+        return Math.max(1.8, 60 / hr * 2.2);
+    };
+    return (
+        <div className="
+            bg-white/70 backdrop-blur-xl
+            rounded-3xl 
+            border border-white/60
+            shadow-[0_10px_40px_rgba(0,0,0,0.06)]
+            overflow-hidden flex flex-col h-full
+        ">
+
+            {/* Header */}
+            <div className="px-6 py-4 border-b border-white/40">
+                <p className="text-[11px] font-semibold text-slate-500 tracking-widest uppercase">
+                    Patient Directory
+                </p>
             </div>
 
-            <div className="p-5 flex-1 flex flex-col gap-5">
+            <div className="p-6 flex-1 flex flex-col gap-6">
 
-                {/* Profile Section */}
+                {/* Profile */}
                 <motion.div
                     key={activePatient.id}
-                    initial={{ opacity: 0, y: 6 }}
+                    initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.2 }}
+                    transition={{ duration: 0.25 }}
                     className="flex flex-col items-center gap-4 text-center"
                 >
-                    <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center border-2 border-blue-100">
+                    <div className="
+                        w-20 h-20 
+                        bg-gradient-to-br from-blue-50 to-indigo-50
+                        rounded-full 
+                        flex items-center justify-center 
+                        border border-blue-100
+                        shadow-inner
+                    ">
                         <User className="w-10 h-10 text-blue-400" />
                     </div>
+
                     <div className="space-y-2">
-                        <h2 className="text-xl font-bold text-[#0F172A]">{activePatient.name}</h2>
+                        <h2 className="text-xl font-bold text-[#0F172A]">
+                            {activePatient.name}
+                        </h2>
+
                         <div className="flex items-center justify-center gap-2 flex-wrap">
-                            <span className="text-xs font-medium px-2.5 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full border border-[#E2E8F0]">
+                            <span className="text-xs font-medium px-2.5 py-1 bg-slate-100 text-slate-600 rounded-full border border-slate-200">
                                 ID: {activePatient.id.toUpperCase()}
                             </span>
-                            <span className="text-xs font-medium px-2.5 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full border border-[#E2E8F0]">
+
+                            <span className="text-xs font-medium px-2.5 py-1 bg-slate-100 text-slate-600 rounded-full border border-slate-200">
                                 Age {activePatient.age}
                             </span>
-                            <span className={`text-xs font-medium px-2.5 py-0.5 rounded-full border ${conditionColor(activePatient.condition)}`}>
+
+                            <span className={`text-xs font-medium px-2.5 py-1 rounded-full border ${conditionColor(activePatient.condition)}`}>
                                 <span className="inline-block w-1.5 h-1.5 rounded-full bg-current mr-1.5 align-middle opacity-70" />
                                 {activePatient.condition}
                             </span>
@@ -62,65 +111,156 @@ export const PatientPanel: React.FC<PatientPanelProps> = ({
                 </motion.div>
 
                 {/* Vitals */}
-                <div className="space-y-2.5">
-                    {/* Heart Rate with mini sparkline */}
-                    <div className="p-3.5 bg-[#F8FAFC] rounded-xl border border-[#E2E8F0] flex items-center justify-between gap-3">
-                        <div className="flex items-center gap-2.5">
-                            <div className="w-8 h-8 bg-red-50 rounded-lg flex items-center justify-center border border-red-100">
+                <div className="space-y-3">
+
+                    {/* Heart Rate */}
+                    <div className="
+                        p-4 
+                        bg-white/60 backdrop-blur-md
+                        rounded-2xl 
+                        border border-white/40
+                        flex items-center justify-between gap-3
+                        shadow-[0_4px_12px_rgba(0,0,0,0.04)]
+                    ">
+                        <div className="flex items-center gap-3">
+                            <div className="w-9 h-9 bg-red-50 rounded-xl flex items-center justify-center border border-red-100">
                                 <Heart className="w-4 h-4 text-red-500" />
                             </div>
-                            <span className="text-sm font-medium text-[#64748B]">Heart Rate</span>
+                            <span className="text-sm font-medium text-slate-600">Heart Rate</span>
                         </div>
-                        <span className="text-sm font-bold text-blue-600">{activePatient.vitals.hr} <span className="font-medium text-[#64748B]">BPM</span></span>
+
+                        <span className="text-sm font-semibold text-blue-600">
+                            {activePatient.vitals.hr} <span className="text-slate-500 font-medium">BPM</span>
+                        </span>
                     </div>
 
-                    {/* Mini ECG sparkline */}
-                    <div className="px-3.5 py-2 bg-[#F8FAFC] rounded-xl border border-[#E2E8F0] overflow-hidden">
-                        <motion.div className="w-full" animate={{ x: [-20, 0] }} transition={{ repeat: Infinity, duration: 1.2, ease: 'linear' }}>
-                            <svg className="w-[110%] h-9 opacity-40" viewBox="0 0 200 36">
-                                <path d="M 0 18 L 20 18 L 30 4 L 38 30 L 44 18 L 60 18 L 80 18 L 90 4 L 98 30 L 104 18 L 120 18 L 140 18 L 150 4 L 158 30 L 164 18 L 200 18" fill="none" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
-                        </motion.div>
+                    {/* REAL ECG - ADVANCED */}
+                    <div className="
+    px-4 py-2 
+    bg-white/60 backdrop-blur-md 
+    rounded-2xl border border-white/40 
+    overflow-hidden relative
+">
+                        {/* soft ambient glow */}
+                        <div className="absolute inset-0 bg-blue-500/10 blur-2xl opacity-40 pointer-events-none" />
+
+                        <svg className="w-full h-10" viewBox="0 0 300 40">
+                            <defs>
+                                <linearGradient id="ecgGradient" x1="0" y1="0" x2="1" y2="0">
+                                    <stop offset="0%" stopColor="#2563eb" stopOpacity="0.2" />
+                                    <stop offset="50%" stopColor="#2563eb" stopOpacity="1" />
+                                    <stop offset="100%" stopColor="#2563eb" stopOpacity="0.2" />
+                                </linearGradient>
+                            </defs>
+
+                            <motion.path
+                                fill="none"
+                                stroke="url(#ecgGradient)"
+                                strokeWidth="2.2"
+                                strokeLinecap="round"
+
+                                initial={{ pathLength: 0 }}
+                                animate={{ pathLength: 1 }}
+
+                                transition={{
+                                    duration: getECGDuration(activePatient.vitals.hr),
+                                    ease: "easeInOut",
+                                    repeat: Infinity
+                                }}
+
+                                style={{
+                                    filter: "drop-shadow(0px 0px 8px rgba(37,99,235,0.6))"
+                                }}
+
+                                d={generateECGPath()}
+                            />
+                        </svg>
                     </div>
 
                     {/* Blood Pressure */}
-                    <div className="p-3.5 bg-[#F8FAFC] rounded-xl border border-[#E2E8F0] flex items-center justify-between gap-3">
-                        <div className="flex items-center gap-2.5">
-                            <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center border border-blue-100">
+                    <div className="
+                        p-4 
+                        bg-white/60 backdrop-blur-md
+                        rounded-2xl 
+                        border border-white/40
+                        flex items-center justify-between gap-3
+                        shadow-[0_4px_12px_rgba(0,0,0,0.04)]
+                    ">
+                        <div className="flex items-center gap-3">
+                            <div className="w-9 h-9 bg-blue-50 rounded-xl flex items-center justify-center border border-blue-100">
                                 <Droplets className="w-4 h-4 text-blue-500" />
                             </div>
-                            <span className="text-sm font-medium text-[#64748B]">Blood Pressure</span>
+                            <span className="text-sm font-medium text-slate-600">Blood Pressure</span>
                         </div>
-                        <span className="text-sm font-bold text-[#0F172A]">{activePatient.vitals.bp} <span className="text-[10px] font-medium text-[#64748B]">mmHg</span></span>
+
+                        <span className="text-sm font-semibold text-[#0F172A]">
+                            {activePatient.vitals.bp}
+                            <span className="text-xs text-slate-500 ml-1">mmHg</span>
+                        </span>
                     </div>
 
                     {/* Temperature */}
-                    <div className="p-3.5 bg-[#F8FAFC] rounded-xl border border-[#E2E8F0] flex items-center justify-between gap-3">
-                        <div className="flex items-center gap-2.5">
-                            <div className="w-8 h-8 bg-amber-50 rounded-lg flex items-center justify-center border border-amber-100">
+                    <div className="
+                        p-4 
+                        bg-white/60 backdrop-blur-md
+                        rounded-2xl 
+                        border border-white/40
+                        flex items-center justify-between gap-3
+                        shadow-[0_4px_12px_rgba(0,0,0,0.04)]
+                    ">
+                        <div className="flex items-center gap-3">
+                            <div className="w-9 h-9 bg-amber-50 rounded-xl flex items-center justify-center border border-amber-100">
                                 <Thermometer className="w-4 h-4 text-amber-500" />
                             </div>
-                            <span className="text-sm font-medium text-[#64748B]">Temperature</span>
+                            <span className="text-sm font-medium text-slate-600">Temperature</span>
                         </div>
-                        <span className="text-sm font-bold text-[#0F172A]">{activePatient.vitals.temp}</span>
+
+                        <span className="text-sm font-semibold text-[#0F172A]">
+                            {activePatient.vitals.temp}
+                        </span>
                     </div>
                 </div>
             </div>
 
-            {/* Navigation Footer */}
-            <div className="px-5 py-4 border-t border-[#E2E8F0] grid grid-cols-2 gap-3">
+            {/* Footer */}
+            <div className="px-6 py-4 border-t border-white/40 grid grid-cols-2 gap-3">
                 <button
                     data-interactive-id="btn-prev"
                     onClick={onPrev}
-                    className="h-10 flex items-center justify-center gap-2 rounded-xl border border-[#E2E8F0] bg-white text-sm font-medium text-[#64748B] hover:bg-[#F8FAFC] transition-all duration-200"
+                    className="
+                    h-10 flex items-center justify-center gap-2 
+                    rounded-xl 
+
+                    bg-white/70 backdrop-blur-md
+                    border border-white/50
+
+                    text-sm font-medium text-slate-600
+
+                    shadow-[0_2px_8px_rgba(0,0,0,0.05)]
+
+                    hover:bg-white/90
+                    hover:text-slate-800
+                    hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)]
+
+                    active:scale-[0.97]
+
+                    transition-all duration-200
+                "
                 >
-                    <ChevronLeft className="w-4 h-4" />
+                    <ChevronLeft className="w-4 h-4 opacity-70" />
                     Prev
                 </button>
+
                 <button
                     data-interactive-id="btn-next"
                     onClick={onNext}
-                    className="h-10 flex items-center justify-center gap-2 rounded-xl bg-blue-600 text-sm font-medium text-white hover:bg-blue-700 transition-all duration-200 shadow-sm"
+                    className="
+                        h-10 flex items-center justify-center gap-2 
+                        rounded-xl 
+                        bg-blue-600 text-white text-sm font-medium
+                        hover:bg-blue-700 transition-all
+                        shadow-[0_4px_12px_rgba(37,99,235,0.3)]
+                    "
                 >
                     Next
                     <ChevronRight className="w-4 h-4" />
