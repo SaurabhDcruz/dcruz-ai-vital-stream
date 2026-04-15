@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { Hand } from 'lucide-react';
-import { BackgroundAmbient } from '../BackgroundAmbient';
+import BackgroundAmbient from '../BackgroundAmbient';
 
 interface CalibrationScreenProps {
     isStable: boolean;
@@ -15,13 +15,14 @@ export const CalibrationScreen: React.FC<CalibrationScreenProps> = ({
     currentFps
 }) => {
     const latency = Math.round(1000 / Math.max(1, currentFps));
+    const circumference = 879.6;
 
     return (
         <div className="fixed inset-0 flex flex-col items-center justify-center p-6 overflow-hidden">
             <BackgroundAmbient />
 
             {/* Container for Centered Elements */}
-            <div className="flex flex-col items-center justify-center gap-10">
+            <div className="flex flex-col items-center justify-center gap-10 w-full max-w-lg">
 
                 {/* Main Element - Center Circle */}
                 <div className="relative w-[320px] h-[320px] md:w-[360px] md:h-[360px] flex items-center justify-center">
@@ -37,75 +38,122 @@ export const CalibrationScreen: React.FC<CalibrationScreenProps> = ({
                             cx="160" cy="160" r="140"
                             fill="none"
                             stroke="#E2E8F0"
-                            strokeWidth="6"
-                            strokeOpacity="0.3"
+                            strokeWidth="4"
+                            strokeOpacity="0.25"
                         />
                         <motion.circle
                             cx="160" cy="160" r="140"
                             fill="none"
                             stroke="url(#blueGradient)"
-                            strokeWidth="6"
+                            strokeWidth="4"
                             strokeLinecap="round"
                             style={{
-                                strokeDasharray: 880,
-                                filter: 'drop-shadow(0 0 8px rgba(79,140,255,0.4))'
+                                strokeDasharray: circumference,
+                                filter: 'drop-shadow(0 0 4px rgba(79,140,255,0.25))'
                             }}
-                            initial={{ strokeDashoffset: 880 }}
-                            animate={{ strokeDashoffset: 880 - (stabilityScore / 100) * 880 }}
+                            initial={{ strokeDashoffset: circumference }}
+                            animate={{ strokeDashoffset: circumference - (stabilityScore / 100) * circumference }}
                             transition={{ duration: 0.5, ease: "easeOut" }}
                         />
                     </svg>
 
                     {/* Glass Disc */}
-                    <div className="relative w-[84%] h-[84%] rounded-full bg-gradient-to-b from-white/80 to-white/50 backdrop-blur-[24px] shadow-[0_30px_100px_rgba(0,0,0,0.08),inset_0_2px_4px_rgba(255,255,255,0.8),inset_0_-2px_8px_rgba(0,0,0,0.04)] flex flex-col items-center justify-center p-12 text-center border border-white/50">
+                    <div className="relative w-[82%] h-[82%] rounded-full bg-white/70 backdrop-blur-[20px] shadow-[0_10px_40px_rgba(0,0,0,0.06),inset_0_2px_4px_rgba(255,255,255,0.8)] flex flex-col items-center justify-center p-12 text-center border border-white/40">
                         <motion.div
-                            animate={{ scale: [1, 1.05, 1] }}
-                            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                            animate={{ scale: [1, 1.03, 1] }}
+                            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
                             className="mb-8"
                         >
                             <Hand size={72} className="text-[#4F8CFF]" strokeWidth={1.2} />
                         </motion.div>
 
                         <h1 className="text-[#0F172A] text-xl font-medium tracking-tight opacity-90">
-                            Scanning your hand...
+                            Scanning Your Hand
                         </h1>
                     </div>
                 </div>
 
                 {/* Telemetry below circle */}
-                <div className="flex flex-col items-center gap-3">
-                    <p className="text-[#0F172A] text-lg font-bold opacity-90 tracking-wide uppercase">
+                <div className="flex flex-col items-center gap-2">
+                    <p className="text-[#0F172A] text-lg font-bold opacity-90 tracking-wide">
                         LATENCY {latency}ms
                     </p>
                 </div>
 
-                {/* Bottom Confidence Card - Now in flow */}
-                <div className="w-full max-w-md mt-6">
-                    <div className="bg-white/70 backdrop-blur-md rounded-[24px] p-8 shadow-[0_15px_40px_rgba(0,0,0,0.08)] border border-white/40 flex items-center gap-8 translate-y-0">
+                <div className="w-full max-w-[380px] mt-3">
+                    <div className="
+                        relative
+                        bg-white/60
+                        backdrop-blur-xl
+                        rounded-[22px]
+                        p-6
+                        border border-white/40
+                        shadow-[0_20px_60px_rgba(15,23,42,0.12)]
+                        flex items-center gap-5
+                        overflow-hidden
+                    ">
+
+                        {/* subtle gradient overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-white/40 via-transparent to-blue-100/20 pointer-events-none" />
+
+                        {/* glow highlight */}
+                        <div className="absolute -top-10 -left-10 w-32 h-32 bg-blue-400/20 blur-3xl rounded-full" />
+
                         {/* Small Circular Progress */}
-                        <div className="relative w-16 h-16 flex items-center justify-center flex-shrink-0">
+                        <div className="relative w-14 h-14 flex items-center justify-center flex-shrink-0">
                             <svg viewBox="0 0 64 64" className="absolute inset-0 w-full h-full -rotate-90">
-                                <circle cx="32" cy="32" r="28" fill="none" stroke="#E2E8F0" strokeWidth="4" strokeOpacity="0.4" />
+                                <circle
+                                    cx="32"
+                                    cy="32"
+                                    r="28"
+                                    fill="none"
+                                    stroke="#E2E8F0"
+                                    strokeWidth="3"
+                                    strokeOpacity="0.25"
+                                />
+
                                 <motion.circle
-                                    cx="32" cy="32" r="28"
-                                    fill="none" stroke="#4F8CFF"
-                                    strokeWidth="4" strokeLinecap="round"
+                                    cx="32"
+                                    cy="32"
+                                    r="28"
+                                    fill="none"
+                                    stroke="url(#gradientStroke)"
+                                    strokeWidth="3.5"
+                                    strokeLinecap="round"
                                     initial={{ strokeDashoffset: 176 }}
                                     animate={{ strokeDashoffset: 176 - (stabilityScore / 100) * 176 }}
+                                    transition={{ duration: 0.6, ease: "easeOut" }}
                                     style={{ strokeDasharray: 176 }}
                                 />
+
+                                {/* gradient stroke */}
+                                <defs>
+                                    <linearGradient id="gradientStroke" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stopColor="#3B82F6" />
+                                        <stop offset="100%" stopColor="#06B6D4" />
+                                    </linearGradient>
+                                </defs>
                             </svg>
-                            <span className="text-[#4F8CFF] text-[10px] font-bold">{stabilityScore}%</span>
+
+                            <span className="text-[#3B82F6] text-[10px] font-semibold tracking-tight">
+                                {stabilityScore}%
+                            </span>
                         </div>
 
-                        <div className="space-y-1.5 flex-1">
-                            <h3 className="text-[#0F172A] text-sm font-bold tracking-tight">
-                                Confidence... {stabilityScore}%
+                        {/* Content */}
+                        <div className="space-y-1 flex-1 relative z-10">
+                            <h3 className="text-[#0F172A] text-sm font-semibold tracking-tight">
+                                Confidence
+                                <span className="ml-1 text-blue-500 font-bold">
+                                    {stabilityScore}%
+                                </span>
                             </h3>
+
                             <p className="text-[#64748B] text-[11px] font-medium leading-relaxed opacity-80">
                                 Keep your hand within the camera frame
                             </p>
                         </div>
+
                     </div>
                 </div>
             </div>

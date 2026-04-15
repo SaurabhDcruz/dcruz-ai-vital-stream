@@ -57,14 +57,14 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 )}
             </AnimatePresence>
 
-            <header className="sticky top-0 z-[1000] w-full bg-slate-950/90 backdrop-blur-2xl border-b border-cyan-500/15 px-6 py-4 flex items-center justify-between tech-hud-border">
-                <div className="corner-tr" /><div className="corner-bl" />
+            <header className="sticky top-0 z-[1000] w-full bg-white/70 backdrop-blur-2xl border-b border-blue-500/10 px-6 py-4 flex items-center justify-between">
+
                 <div className="flex items-center gap-4">
                     <div className="w-10 h-10 bg-cyan-600/20 rounded-xl flex items-center justify-center border border-cyan-500/30">
                         <HeartPulse className="text-cyan-400 w-6 h-6 animate-pulse" />
                     </div>
-                    <h1 className="text-xl md:text-2xl font-black tracking-tighter text-white uppercase font-heading">
-                        VITAL<span className="text-cyan-500">STREAM</span>
+                    <h1 className="text-xl md:text-2xl font-black tracking-tighter text-slate-900 uppercase font-heading">
+                        VITAL<span className="text-blue-600">STREAM</span>
                     </h1>
                 </div>
                 <div className="flex items-center gap-4 md:gap-8">
@@ -82,7 +82,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                     </AnimatePresence>
                     <button
                         onClick={onDebugToggle}
-                        className={`p-2.5 rounded-lg border ${debugMode ? 'bg-cyan-500 border-cyan-400 text-slate-950' : 'bg-slate-900 border-slate-800 text-slate-500'}`}
+                        className={`p-2.5 rounded-lg border transition-all ${debugMode ? 'bg-blue-600 border-blue-500 text-white' : 'bg-white border-slate-200 text-slate-400'}`}
                     >
                         <Cpu className="w-4 h-4" />
                     </button>
@@ -95,7 +95,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 </div>
 
                 <div className="lg:col-span-8">
-                    <Card className="tech-glass bg-slate-900/40 border-cyan-500/10 h-full relative overflow-hidden tech-hud-border min-h-[500px] flex flex-col">
+                    <Card className="bg-white/60 backdrop-blur-xl border-blue-500/10 h-full relative overflow-hidden rounded-[24px] shadow-[0_20px_50px_rgba(0,0,0,0.04)] min-h-[500px] flex flex-col">
                         <ImageViewer image={activePatient.image} imgScale={imgScale} imgOffset={imgOffset} />
                         <ActionPanel onRunAnalysis={onRunAnalysis} onReset={onResetView} />
                     </Card>

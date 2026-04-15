@@ -100,9 +100,11 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white font-sans selection:bg-cyan-500/30 overflow-hidden relative">
-      <div className="fixed inset-0 bg-slate-950 -z-20" />
-      <div className="fixed inset-0 scanline-bg opacity-5 -z-10 pointer-events-none" />
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-blue-500/20 overflow-hidden relative">
+      <div className="fixed inset-0 bg-gradient-to-br from-[#F8FAFC] to-[#E2E8F0] -z-20" />
+      <div className="bokeh-blob bokeh-1" />
+      <div className="bokeh-blob bokeh-2" />
+      <div className="fixed inset-0 scanline-bg opacity-[0.02] -z-10 pointer-events-none" />
 
       {systemStage === 'test' ? (
         <CalibrationScreen
