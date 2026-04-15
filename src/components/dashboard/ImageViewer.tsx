@@ -1,7 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { RefreshCw } from 'lucide-react';
-import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ZoomIn } from 'lucide-react';
 
 interface ImageViewerProps {
     image: string;
@@ -16,23 +15,37 @@ export const ImageViewer: React.FC<ImageViewerProps> = ({
 }) => {
     return (
         <>
-            <CardHeader className="border-b border-cyan-500/10 bg-cyan-500/5 px-6 py-4">
-                <CardTitle className="text-sm font-black text-white uppercase tracking-widest">DIAGNOSTIC_VIEWER</CardTitle>
-            </CardHeader>
-            <CardContent className="p-0 flex-1 relative bg-slate-950 flex items-center justify-center overflow-hidden">
-                <div className="absolute inset-0 industrial-grid opacity-10 pointer-events-none" />
+            {/* Viewer Header */}
+            <div className="px-5 py-4 border-b border-[#E2E8F0] flex items-center justify-between">
+                <p className="text-sm font-semibold text-[#0F172A]">Diagnostic Viewer</p>
+                <span className="text-xs text-[#64748B]">Gesture-controlled</span>
+            </div>
+
+            {/* Image Area */}
+            <div className="flex-1 relative bg-[#F8FAFC] flex items-center justify-center overflow-hidden min-h-[380px]">
+                {/* Subtle grid */}
+                <div
+                    className="absolute inset-0 pointer-events-none opacity-[0.4]"
+                    style={{
+                        backgroundImage: 'radial-gradient(circle at 1px 1px, #CBD5E1 1px, transparent 0)',
+                        backgroundSize: '28px 28px'
+                    }}
+                />
+
                 <motion.img
                     src={image}
-                    className="max-w-[90%] max-h-[90%] object-contain brightness-110"
+                    className="relative max-w-[92%] max-h-[92%] object-contain rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.1)]"
                     animate={{ scale: imgScale, x: imgOffset.x, y: imgOffset.y }}
-                    transition={{ type: 'spring', damping: 30 }}
+                    transition={{ type: 'spring', damping: 30, stiffness: 200 }}
+                    draggable={false}
                 />
-                <div className="absolute bottom-6 left-6 flex gap-4 opacity-50">
-                    <div className="flex items-center gap-2 px-3 py-1 bg-slate-900 border border-white/10 rounded text-[8px] font-black uppercase tracking-widest">
-                        <RefreshCw className="w-3 h-3" /> PALM_RESET
-                    </div>
+
+                {/* Zoom indicator */}
+                <div className="absolute bottom-4 right-4 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/90 backdrop-blur-sm border border-[#E2E8F0] shadow-sm">
+                    <ZoomIn className="w-3.5 h-3.5 text-[#64748B]" />
+                    <span className="text-xs font-semibold text-[#64748B]">{imgScale.toFixed(1)}x</span>
                 </div>
-            </CardContent>
+            </div>
         </>
     );
 };

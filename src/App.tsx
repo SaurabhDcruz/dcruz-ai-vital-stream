@@ -90,21 +90,18 @@ export default function App() {
 
   if (aiError) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center p-10 text-center">
+      <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center p-10 text-center">
         <div className="space-y-4 max-w-md">
-          <h1 className="text-red-500 font-black text-2xl uppercase tracking-widest">CRITICAL_SYSTEM_ERROR</h1>
-          <p className="text-slate-400 text-sm data-font">{aiError}</p>
+          <h1 className="text-red-500 font-bold text-xl">System Initialization Error</h1>
+          <p className="text-[#64748B] text-sm">{aiError}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-blue-500/20 overflow-hidden relative">
-      <div className="fixed inset-0 bg-gradient-to-br from-[#F8FAFC] to-[#E2E8F0] -z-20" />
-      <div className="bokeh-blob bokeh-1" />
-      <div className="bokeh-blob bokeh-2" />
-      <div className="fixed inset-0 scanline-bg opacity-[0.02] -z-10 pointer-events-none" />
+    <div className="min-h-screen bg-[#F8FAFC] text-[#0F172A] font-sans selection:bg-blue-500/20 overflow-hidden relative">
+      <div className="fixed inset-0 bg-gradient-to-b from-[#F8FAFC] to-[#EEF2FF] -z-20" />
 
       {systemStage === 'test' ? (
         <CalibrationScreen
@@ -141,19 +138,23 @@ export default function App() {
         gestureType={gesture.type}
       />
 
-      {/* Report Modal */}
       <AnimatePresence>
         {viewMode === 'report' && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[2000] bg-slate-950/90 flex items-center justify-center p-6 backdrop-blur-md">
-            <div className="w-full max-w-2xl bg-slate-900 border border-cyan-500/20 p-8 tech-hud-border relative shadow-[0_0_100px_rgba(0,0,0,0.8)]">
-              <div className="corner-tr !w-12 !h-12" /><div className="corner-bl !w-12 !h-12" />
-              <h2 className="text-3xl font-black text-white font-heading uppercase mb-8">DIAGNOSTIC_SUMMARY</h2>
-              <div className="bg-slate-950/50 p-6 border border-cyan-500/10 tech-hud-border mb-8">
-                <div className="text-xl font-black text-white uppercase font-heading">{activePatient.name}</div>
-                <div className="text-[10px] font-bold text-cyan-400 data-font mt-2">ID: {activePatient.id} | CONDITION: {activePatient.condition.toUpperCase()}</div>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[2000] bg-black/30 flex items-center justify-center p-6 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.96, y: 8 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.96, y: 8 }}
+              transition={{ duration: 0.2 }}
+              className="w-full max-w-lg bg-white rounded-2xl border border-[#E2E8F0] shadow-[0_20px_60px_rgba(0,0,0,0.12)] p-8"
+            >
+              <h2 className="text-xl font-bold text-[#0F172A] mb-6">Diagnostic Summary</h2>
+              <div className="bg-[#F8FAFC] rounded-xl border border-[#E2E8F0] p-5 mb-6">
+                <div className="text-base font-bold text-[#0F172A]">{activePatient.name}</div>
+                <div className="text-sm text-[#64748B] mt-1">ID: {activePatient.id.toUpperCase()} &middot; Status: {activePatient.condition}</div>
               </div>
-              <Button data-interactive-id="btn-close-report" onClick={() => setViewMode('dashboard')} className="w-full h-14 bg-cyan-600 text-white font-black uppercase tracking-widest font-heading">CLOSE_REPORT</Button>
-            </div>
+              <Button data-interactive-id="btn-close-report" onClick={() => setViewMode('dashboard')} className="w-full h-11 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-colors">Close Report</Button>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

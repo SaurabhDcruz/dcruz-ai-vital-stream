@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '@/components/ui/button';
+import { BarChart2, RotateCcw } from 'lucide-react';
 
 interface ActionPanelProps {
     onRunAnalysis: () => void;
@@ -11,21 +11,23 @@ export const ActionPanel: React.FC<ActionPanelProps> = ({
     onReset
 }) => {
     return (
-        <div className="h-20 bg-blue-50/50 border-t border-blue-500/10 p-4 flex gap-4">
-            <Button
+        <div className="px-5 py-4 border-t border-[#E2E8F0] bg-white flex items-center gap-3">
+            <button
                 data-interactive-id="btn-report"
                 onClick={onRunAnalysis}
-                className="flex-1 bg-blue-600 text-white font-black text-[10px] uppercase shadow-md hover:bg-blue-700"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 active:scale-[0.98] transition-all duration-200 shadow-sm"
             >
-                RUN_ANALYSIS
-            </Button>
-            <Button
+                <BarChart2 className="w-4 h-4" />
+                Run Analysis
+            </button>
+            <button
                 data-interactive-id="btn-reset"
                 onClick={onReset}
-                className="flex-1 bg-white border-slate-200 text-slate-500 font-black text-[10px] uppercase hover:bg-slate-50 shadow-sm"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-[#E2E8F0] bg-white text-sm font-medium text-[#64748B] hover:bg-[#F8FAFC] active:scale-[0.98] transition-all duration-200"
             >
-                RESET
-            </Button>
+                <RotateCcw className="w-4 h-4" />
+                Reset View
+            </button>
         </div>
     );
 };

@@ -1,7 +1,6 @@
 import React from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { Cpu, HeartPulse } from 'lucide-react';
-import { Card } from '@/components/ui/card';
+import { Activity, Cpu, Settings } from 'lucide-react';
 import { PatientPanel } from './PatientPanel';
 import { ImageViewer } from './ImageViewer';
 import { ActionPanel } from './ActionPanel';
@@ -36,45 +35,88 @@ export const Dashboard: React.FC<DashboardProps> = ({
     isTrackingLost
 }) => {
     return (
-        <div className="w-full h-full flex flex-col">
+        <div className="w-full h-full flex flex-col bg-[#F8FAFC]">
+
+            {/* Tracking Lost Alert — soft inline banner */}
             <AnimatePresence>
                 {isTrackingLost && (
                     <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 20 }}
-                        className="fixed bottom-12 md:bottom-24 left-4 right-4 md:left-1/2 md:-translate-x-1/2 z-[10001] bg-slate-900 border border-red-500/30 text-red-500 px-10 py-4 rounded-xl font-black shadow-2xl flex items-center gap-6 tech-glass tech-hud-border"
+                        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                        transition={{ duration: 0.25, ease: "easeOut" }}
+                        className="
+                            fixed 
+                            bottom-3 sm:bottom-6 
+                            left-1/2 -translate-x-1/2 
+                            z-[10001]
+
+                            flex items-center gap-2 sm:gap-3
+
+                            px-3 sm:px-5 
+                            py-2 sm:py-3
+
+                            rounded-xl sm:rounded-2xl
+
+                            bg-red-50/80 backdrop-blur-xl
+                            border border-red-200/60
+
+                            shadow-[0_6px_25px_rgba(239,68,68,0.15)]
+
+                            max-w-[90%] sm:max-w-md
+                            w-auto
+                        "
                     >
-                        {/* Keeping original ScanLine icon and text logic */}
-                        <div className="w-6 h-6 animate-pulse bg-red-500/20 rounded flex items-center justify-center">
-                            <div className="w-2 h-2 bg-red-500 rounded-full" />
+                        {/* Status Dot */}
+                        <div className="
+                w-4 h-4 sm:w-5 sm:h-5 
+                rounded-full 
+                bg-red-100 
+                flex items-center justify-center 
+                flex-shrink-0
+            ">
+                            <div className="
+                    w-1.5 h-1.5 sm:w-2 sm:h-2 
+                    bg-red-500 
+                    rounded-full 
+                    animate-pulse
+                " />
                         </div>
-                        <div className="flex flex-col">
-                            <span className="text-[10px] uppercase tracking-[0.4em] opacity-60">ALERT_TRACKING_CRITICAL</span>
-                            <span className="text-lg uppercase">SIGNAL_LOST</span>
-                        </div>
+
+                        {/* Text */}
+                        <span className="
+                text-[12px] sm:text-sm 
+                font-medium 
+                text-red-600 
+                leading-tight
+                text-center sm:text-left
+            ">
+                            Tracking lost. Please keep your hand visible.
+                        </span>
                     </motion.div>
                 )}
             </AnimatePresence>
 
-            <header className="sticky top-0 z-[1000] w-full bg-white/70 backdrop-blur-2xl border-b border-blue-500/10 px-6 py-4 flex items-center justify-between">
-
-                <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-cyan-600/20 rounded-xl flex items-center justify-center border border-cyan-500/30">
-                        <HeartPulse className="text-cyan-400 w-6 h-6 animate-pulse" />
+            {/* Header */}
+            <header className="sticky top-0 z-[1000] w-full bg-white border-b border-[#E2E8F0] px-6 py-3 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center shadow-sm">
+                        <Activity className="text-white w-5 h-5" />
                     </div>
-                    <h1 className="text-xl md:text-2xl font-black tracking-tighter text-slate-900 uppercase font-heading">
-                        VITAL<span className="text-blue-600">STREAM</span>
-                    </h1>
+                    <span className="text-xl font-bold text-[#0F172A] tracking-tight">
+                        Vital<span className="text-blue-600">Stream</span>
+                    </span>
                 </div>
-                <div className="flex items-center gap-4 md:gap-8">
+
+                <div className="flex items-center gap-3">
                     <AnimatePresence mode="wait">
                         {gesture.type !== 'none' && (
                             <motion.div
-                                initial={{ opacity: 0, y: -10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -10 }}
-                                className="px-4 py-1.5 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 rounded-lg text-[10px] font-black uppercase tracking-[0.2em]"
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.9 }}
+                                transition={{ duration: 0.15 }}
+                                className="px-3 py-1.5 bg-blue-50 border border-blue-100 text-blue-600 rounded-lg text-xs font-medium capitalize"
                             >
                                 {gesture.type}
                             </motion.div>
@@ -82,23 +124,34 @@ export const Dashboard: React.FC<DashboardProps> = ({
                     </AnimatePresence>
                     <button
                         onClick={onDebugToggle}
-                        className={`p-2.5 rounded-lg border transition-all ${debugMode ? 'bg-blue-600 border-blue-500 text-white' : 'bg-white border-slate-200 text-slate-400'}`}
+                        title="Debug Mode"
+                        className={`p-2 rounded-xl border transition-all duration-200 ${debugMode
+                            ? 'bg-blue-600 border-blue-600 text-white'
+                            : 'bg-white border-[#E2E8F0] text-[#64748B] hover:bg-slate-50'
+                            }`}
                     >
                         <Cpu className="w-4 h-4" />
+                    </button>
+                    <button className="p-2 rounded-xl border border-[#E2E8F0] bg-white text-[#64748B] hover:bg-slate-50 transition-all duration-200">
+                        <Settings className="w-4 h-4" />
                     </button>
                 </div>
             </header>
 
-            <main className="max-w-[1600px] mx-auto p-4 md:p-8 grid lg:grid-cols-12 gap-6 md:gap-10 min-h-[calc(100vh-5rem)] relative z-10">
-                <div className="lg:col-span-4 space-y-6">
+            {/* Main Content */}
+            <main className="flex-1 max-w-[1600px] w-full mx-auto p-4 md:p-6 grid lg:grid-cols-12 gap-4 md:gap-6 overflow-auto">
+
+                {/* Patient Panel */}
+                <div className="lg:col-span-4 xl:col-span-3">
                     <PatientPanel activePatient={activePatient} onPrev={onPrevPatient} onNext={onNextPatient} />
                 </div>
 
-                <div className="lg:col-span-8">
-                    <Card className="bg-white/60 backdrop-blur-xl border-blue-500/10 h-full relative overflow-hidden rounded-[24px] shadow-[0_20px_50px_rgba(0,0,0,0.04)] min-h-[500px] flex flex-col">
+                {/* Image Viewer + Action Panel */}
+                <div className="lg:col-span-8 xl:col-span-9 flex flex-col gap-4">
+                    <div className="flex-1 bg-white rounded-2xl border border-[#E2E8F0] shadow-[0_4px_12px_rgba(0,0,0,0.04)] overflow-hidden flex flex-col min-h-[500px]">
                         <ImageViewer image={activePatient.image} imgScale={imgScale} imgOffset={imgOffset} />
                         <ActionPanel onRunAnalysis={onRunAnalysis} onReset={onResetView} />
-                    </Card>
+                    </div>
                 </div>
             </main>
         </div>
