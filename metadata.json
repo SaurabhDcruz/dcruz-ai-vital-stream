@@ -1,0 +1,6 @@
+{
+  "name": "VitalStream Hospital UI",
+  "description": "A high-performance, touchless hospital interface featuring real-time webcam integration for gesture-based control and patient monitoring.",
+  "requestFramePermissions": ["camera", "microphone"],
+  "majorCapabilities": []
+}
