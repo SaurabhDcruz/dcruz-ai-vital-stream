@@ -9,10 +9,9 @@ export function useHUDDrag() {
     const handleHUDMouseDown = (e: React.MouseEvent) => {
         if (!hudRef.current) return;
         isDraggingHUD.current = true;
-        const rect = hudRef.current.getBoundingClientRect();
         dragStartOffset.current = {
-            x: e.clientX - (hudPositionRef.current?.x || rect.left),
-            y: e.clientY - (hudPositionRef.current?.y || rect.top)
+            x: e.clientX - (hudPositionRef.current?.x || 0),
+            y: e.clientY - (hudPositionRef.current?.y || 0)
         };
         e.preventDefault();
     };
@@ -23,15 +22,13 @@ export function useHUDDrag() {
             if (isDraggingHUD.current && hudRef.current) {
                 cancelAnimationFrame(dragFrame);
                 dragFrame = requestAnimationFrame(() => {
-                    const x = e.clientX - dragStartOffset.current.x;
-                    const y = e.clientY - dragStartOffset.current.y;
+                    const dx = e.clientX - dragStartOffset.current.x;
+                    const dy = e.clientY - dragStartOffset.current.y;
+
                     if (hudRef.current) {
-                        hudRef.current.style.transform = `translate3d(${x}px, ${y}px, 0)`;
-                        hudRef.current.style.left = '0';
-                        hudRef.current.style.top = '0';
-                        hudRef.current.style.right = 'auto';
+                        hudRef.current.style.transform = `translate3d(${dx}px, ${dy}px, 0)`;
                     }
-                    hudPositionRef.current = { x, y };
+                    hudPositionRef.current = { x: dx, y: dy };
                 });
             }
         };
