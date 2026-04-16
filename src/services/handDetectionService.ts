@@ -15,8 +15,16 @@ export const initHandDetection = async () => {
 
   isLoading = true;
   try {
+    console.log('[System] Initializing MediaPipe HandLandmarker...');
+
+    // Clear existing if any (for clean retry)
+    if (handLandmarker) {
+      handLandmarker.close();
+      handLandmarker = null;
+    }
+
     const vision = await FilesetResolver.forVisionTasks(
-      'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm'
+      'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm'
     );
 
     handLandmarker = await HandLandmarker.createFromOptions(vision, {
@@ -31,10 +39,11 @@ export const initHandDetection = async () => {
       minTrackingConfidence: 0.5
     });
 
-    console.log('MediaPipe HandLandmarker initialized');
+    console.log('[System] MediaPipe HandLandmarker initialized successfully');
     return handLandmarker;
   } catch (error) {
-    console.error('Failed to initialize HandLandmarker:', error);
+    console.error('[System] HandLandmarker initialization failed:', error);
+    handLandmarker = null; // Ensure null on failure
     throw error;
   } finally {
     isLoading = false;

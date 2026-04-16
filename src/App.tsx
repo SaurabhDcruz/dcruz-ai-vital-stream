@@ -21,9 +21,13 @@ import { Cursor } from './components/hud/Cursor';
 import { initHandDetection } from './services/handDetectionService';
 import { GestureState } from './services/gestureService';
 
+// Types
+import { ErrorType } from './components/initialization/InitializationError';
+import { InitializationError } from './components/initialization/InitializationError';
+
 export default function App() {
   const [isAIReady, setIsAIReady] = useState(false);
-  const [aiError, setAiError] = useState<string | null>(null);
+  const [systemError, setSystemError] = useState<{ type: ErrorType; message: string } | null>(null);
   const [systemStage, setSystemStage] = useState<'test' | 'dashboard'>('test');
   const [showCinematic, setShowCinematic] = useState(false);
   const [stabilityScore, setStabilityScore] = useState(0);
@@ -84,15 +88,46 @@ export default function App() {
     patientCount: PATIENTS.length
   });
 
+  const initializeSystem = async () => {
+    setSystemError(null);
+    setIsAIReady(false);
+
+    try {
+      // 1. Warm up camera check (optional but helps isolate permissions)
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        stream.getTracks().forEach(t => t.stop());
+      } catch (camErr: any) {
+        console.error('[System] Camera access failed:', camErr);
+        setSystemError({
+          type: 'CAMERA_PERMISSION_DENIED',
+          message: 'Webcam access is required for touchless gesture control. Please enable permissions in your browser.'
+        });
+        return;
+      }
+
+      // 2. Load AI hand tracking model
+      await initHandDetection();
+      setIsAIReady(true);
+    } catch (err: any) {
+      console.error('[System] AI initialization failed:', err);
+
+      if (!navigator.onLine) {
+        setSystemError({
+          type: 'NETWORK_ERROR',
+          message: 'Unable to load AI model. Please check your internet connection and try again.'
+        });
+      } else {
+        setSystemError({
+          type: 'MODEL_LOAD_FAILED',
+          message: 'Failed to initialize the hand tracking engine. This can happen due to slow network or content blockers.'
+        });
+      }
+    }
+  };
+
   useEffect(() => {
-    initHandDetection()
-      .then(() => setIsAIReady(true))
-      .catch(err => {
-        console.error('[System] Hand Detection AI failed to load:', err);
-        setAiError(
-          'Failed to load hand tracking model. Please focus on fixing the failed tool call with sequential tool calls and try again. Do not do parallel tool calls and if you are fixing multiple tool calls, do them one at a time. Do not apologize. '
-        );
-      });
+    initializeSystem();
   }, []);
 
   useEffect(() => {
@@ -106,14 +141,13 @@ export default function App() {
 
   const activePatient = PATIENTS[activePatientIndex];
 
-  if (aiError) {
+  if (systemError) {
     return (
-      <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center p-10 text-center">
-        <div className="space-y-4 max-w-md">
-          <h1 className="text-red-500 font-bold text-xl">System Initialization Error</h1>
-          <p className="text-[#64748B] text-sm">{aiError}</p>
-        </div>
-      </div>
+      <InitializationError
+        type={systemError.type}
+        message={systemError.message}
+        onRetry={initializeSystem}
+      />
     );
   }
 
