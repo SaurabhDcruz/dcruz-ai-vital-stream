@@ -12,7 +12,7 @@ export const ActionPanel: React.FC<ActionPanelProps> = ({
 }) => {
     return (
         <div className="
-            flex items-center justify-between gap-3
+            flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3
 
             px-4 sm:px-6 py-3 sm:py-4
 
@@ -21,7 +21,13 @@ export const ActionPanel: React.FC<ActionPanelProps> = ({
         ">
 
             {/* BUTTON GROUP */}
-            <div className="grid grid-cols-2 gap-3 w-full sm:w-auto">
+            <div className="
+                grid grid-cols-2 gap-3
+
+                w-full
+                sm:w-auto
+                sm:min-w-[260px]
+            ">
 
                 {/* RUN */}
                 <button
@@ -65,7 +71,11 @@ export const ActionPanel: React.FC<ActionPanelProps> = ({
             </div>
 
             {/* STATUS */}
-            <div className="hidden sm:flex items-center text-xs text-slate-400">
+            <div className="
+                hidden sm:flex items-center justify-center sm:justify-end
+                text-xs text-slate-400
+                w-full sm:w-auto
+            ">
                 Analysis ready
             </div>
         </div>
