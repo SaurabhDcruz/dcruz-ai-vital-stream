@@ -8,6 +8,7 @@ export interface GestureState {
   position: { x: number; y: number };
   isNew: boolean; // True only on the first frame a gesture is detected
   isEnding: boolean; // True only on the frame a gesture is lost
+  rawPinchDistance?: number;
 }
 
 /**
@@ -21,14 +22,14 @@ export class GestureProcessor {
   private readonly maxHistory = 8;
   private readonly smoothingFactor = 0.6;
   private smoothedLandmarks: NormalizedLandmark[] = [];
-  
+
   // Gesture stability state
   private gestureHistory: GestureType[] = [];
   private currentGesture: GestureType = 'none';
   private previousGesture: GestureType = 'none';
   private gestureConfidence = 0;
   private readonly confidenceThreshold = 4; // Must be detected in 4/8 frames
-  
+
   // Swipe detection state
   private lastSwipeTime = 0;
   private readonly swipeCooldown = 800; // ms
@@ -75,7 +76,7 @@ export class GestureProcessor {
     }
 
     const newGesture = maxCount >= this.confidenceThreshold ? bestGesture : 'none';
-    
+
     const isNew = newGesture !== 'none' && newGesture !== this.currentGesture;
     const isEnding = this.currentGesture !== 'none' && newGesture === 'none';
 
@@ -87,14 +88,18 @@ export class GestureProcessor {
       confidence: maxCount / this.maxHistory,
       position: { x: this.smoothedLandmarks[8].x, y: this.smoothedLandmarks[8].y }, // Use index tip as cursor
       isNew,
-      isEnding
+      isEnding,
+      rawPinchDistance: this.getDistance(
+        { x: this.smoothedLandmarks[4].x * window.innerWidth, y: this.smoothedLandmarks[4].y * window.innerHeight, z: 0 },
+        { x: this.smoothedLandmarks[8].x * window.innerWidth, y: this.smoothedLandmarks[8].y * window.innerHeight, z: 0 }
+      )
     };
   }
 
   private detectRawGesture(lm: NormalizedLandmark[]): GestureType {
     // Scale Normalization: Use distance between wrist (0) and middle finger MCP (9) as reference
     const scale = this.getDistance(lm[0], lm[9]);
-    
+
     // 1. Swipe Detection (Temporal)
     const now = performance.now();
     if (this.history.length >= 10 && now - this.lastSwipeTime > this.swipeCooldown) {
@@ -102,7 +107,7 @@ export class GestureProcessor {
       const endWrist = lm[0];
       const dx = endWrist.x - startWrist.x;
       const dy = endWrist.y - startWrist.y;
-      
+
       // Horizontal swipe threshold
       if (Math.abs(dx) > 0.15 && Math.abs(dy) < 0.1) {
         this.lastSwipeTime = now;

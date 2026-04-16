@@ -72,6 +72,7 @@ export function useGestureEngine({
 
     const smoothedTargetPosRef = useRef({ x: 0, y: 0 });
     const smoothingAlpha = 0.2;
+    const prevPinchDistance = useRef<number | null>(null);
 
     const handleFrame = (video: HTMLVideoElement, canvas: HTMLCanvasElement) => {
         const ctx = canvas.getContext('2d');
@@ -137,25 +138,28 @@ export function useGestureEngine({
                 const screenX = (1 - gestureState.position.x) * window.innerWidth;
                 const screenY = gestureState.position.y * window.innerHeight;
 
-                smoothedTargetPosRef.current.x += (screenX - smoothedTargetPosRef.current.x) * smoothingAlpha;
-                smoothedTargetPosRef.current.y += (screenY - smoothedTargetPosRef.current.y) * smoothingAlpha;
-                targetPosRef.current = { x: smoothedTargetPosRef.current.x, y: smoothedTargetPosRef.current.y };
+                // Update smoothing, then check dead zone for the shared targetPosRef
+                const nextX = smoothedTargetPosRef.current.x + (screenX - smoothedTargetPosRef.current.x) * smoothingAlpha;
+                const nextY = smoothedTargetPosRef.current.y + (screenY - smoothedTargetPosRef.current.y) * smoothingAlpha;
 
-                const element = document.elementFromPoint(screenX, screenY);
+                // DEAD ZONE (2px)
+                const dx_move = Math.abs(nextX - targetPosRef.current.x);
+                const dy_move = Math.abs(nextY - targetPosRef.current.y);
+                if (dx_move >= 2 || dy_move >= 2) {
+                    smoothedTargetPosRef.current = { x: nextX, y: nextY };
+                    targetPosRef.current = { x: nextX, y: nextY };
+                }
+
+                const smoothX = targetPosRef.current.x;
+                const smoothY = targetPosRef.current.y;
+
+                const element = document.elementFromPoint(smoothX, smoothY);
                 const interactiveEl = element?.closest('[data-interactive-id]');
                 const currentId = interactiveEl?.getAttribute('data-interactive-id') || null;
 
                 if (currentId !== lastHoveredId.current) {
-                    if (dwellTimer.current) window.clearTimeout(dwellTimer.current);
-                    if (currentId) {
-                        dwellTimer.current = window.setTimeout(() => {
-                            setHoveredId(currentId);
-                            lastHoveredId.current = currentId;
-                        }, 120);
-                    } else {
-                        setHoveredId(null);
-                        lastHoveredId.current = null;
-                    }
+                    setHoveredId(currentId);
+                    lastHoveredId.current = currentId;
                 }
 
                 if (gestureState.type === 'pinch') {
@@ -165,22 +169,36 @@ export function useGestureEngine({
                         if (interactiveEl instanceof HTMLElement) interactiveEl.click();
                     }
                     if (systemStage === 'dashboard' && viewMode === 'dashboard') {
-                        const delta = (gestureState.position.y - 0.5) * -0.05;
-                        setImgScale(prev => Math.max(1, Math.min(5, prev + delta)));
+                        // ZOOM SMOOTHING (Distance based delta * 0.01)
+                        const currentPinchDist = gestureState.rawPinchDistance || 0;
+                        if (prevPinchDistance.current !== null) {
+                            const distDelta = (currentPinchDist - prevPinchDistance.current);
+                            setImgScale(prev => {
+                                const target = Math.max(1, Math.min(3, prev + distDelta * 0.01));
+                                return prev + (target - prev) * 0.2; // 0.2 scale lerp
+                            });
+                        }
+                        prevPinchDistance.current = currentPinchDist;
                     }
-                } else if (lastIsClicked.current) {
-                    setIsClicked(false);
-                    lastIsClicked.current = false;
+                } else {
+                    if (lastIsClicked.current) {
+                        setIsClicked(false);
+                        lastIsClicked.current = false;
+                    }
+                    prevPinchDistance.current = null;
                 }
 
                 if (systemStage === 'dashboard') {
                     if (gestureState.type === 'point') {
                         if (lastPanPos.current) {
-                            const dx = (screenX - lastPanPos.current.x) * 1.5;
-                            const dy = (screenY - lastPanPos.current.y) * 1.5;
-                            setImgOffset(prev => ({ x: prev.x + dx, y: prev.y + dy }));
+                            const dx = (smoothX - lastPanPos.current.x);
+                            const dy = (smoothY - lastPanPos.current.y);
+                            setImgOffset(prev => ({
+                                x: prev.x + dx * 0.5,
+                                y: prev.y + dy * 0.5
+                            }));
                         }
-                        lastPanPos.current = { x: screenX, y: screenY };
+                        lastPanPos.current = { x: smoothX, y: smoothY };
                     } else {
                         lastPanPos.current = null;
                     }

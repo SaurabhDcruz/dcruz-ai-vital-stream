@@ -43,7 +43,7 @@ export default function App() {
 
   // Initialize modular hooks
   const { hudRef, handleHUDMouseDown } = useHUDDrag();
-  const { cursorRef, rawCursorRef, targetPosRef, lastIsClicked, lastGestureType } = useCursor(0.35, debugMode);
+  const { cursorRef, rawCursorRef, targetPosRef, lastIsClicked, lastGestureType } = useCursor(1.0, debugMode);
 
   const { handleFrame } = useGestureEngine({
     isAIReady,
