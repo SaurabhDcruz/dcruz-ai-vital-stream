@@ -33,7 +33,7 @@ export const ActionPanel: React.FC<ActionPanelProps> = ({ onRunAnalysis, onReset
       </div>
 
       {/* STATUS */}
-      <div className="hidden sm:flex items-center justify-center sm:justify-end text-xs text-slate-400 w-full sm:w-auto">
+      <div className="hidden sm:flex items-center justify-center sm:justify-end text-xs md:text-lg text-slate-400 w-full sm:w-auto">
         Analysis ready
       </div>
     </div>
