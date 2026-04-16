@@ -10,8 +10,7 @@ import { GestureState } from '../../services/gestureService';
 
 interface DashboardProps {
   activePatient: Patient;
-  imgScale: number;
-  imgOffset: { x: number; y: number };
+  viewState: { scale: number; x: number; y: number };
   gesture: GestureState;
   debugMode: boolean;
   onDebugToggle: () => void;
@@ -24,8 +23,7 @@ interface DashboardProps {
 
 export const Dashboard: React.FC<DashboardProps> = ({
   activePatient,
-  imgScale,
-  imgOffset,
+  viewState,
   gesture,
   debugMode,
   onDebugToggle,
@@ -90,11 +88,15 @@ export const Dashboard: React.FC<DashboardProps> = ({
         <div className="lg:col-span-8 xl:col-span-9 flex flex-col gap-5">
           <div className="flex-1 flex flex-col min-h-[420px] sm:min-h-[480px] lg:min-h-[520px] rounded-[20px] sm:rounded-[28px] bg-gradient-to-b from-white/90 to-white/70 backdrop-blur-xl border border-white/40 shadow-[0_10px_40px_rgba(15,23,42,0.06)] overflow-hidden transition-all duration-300 hover:shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
             {/* Image Area */}
-            <div className="flex-1 relative bg-gradient-to-br from-slate-50 to-slate-100/60">
+            <div data-interactive-id="diagnostic-viewer" className="flex-1 relative bg-gradient-to-br from-slate-50 to-slate-100/60">
               {/* subtle inner glow */}
               <div className="absolute inset-0 bg-white/20 pointer-events-none" />
 
-              <ImageViewer image={activePatient.image} imgScale={imgScale} imgOffset={imgOffset} />
+              <ImageViewer
+                image={activePatient.image}
+                viewState={viewState}
+                isZooming={gesture.type === 'pinch' && viewState.scale > 1}
+              />
             </div>
 
             {/* Divider (premium subtle line) */}

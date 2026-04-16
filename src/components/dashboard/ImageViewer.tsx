@@ -4,13 +4,13 @@ import { ZoomIn } from 'lucide-react';
 
 interface ImageViewerProps {
   image: string;
-  imgScale: number;
-  imgOffset: { x: number; y: number };
+  viewState: { scale: number; x: number; y: number };
+  isZooming: boolean;
 }
 
-export const ImageViewer: React.FC<ImageViewerProps> = ({ image, imgScale, imgOffset }) => {
+export const ImageViewer: React.FC<ImageViewerProps> = ({ image, viewState, isZooming }) => {
   return (
-    <>
+    <div className={`relative w-full h-full flex flex-col transition-all duration-500 ${isZooming ? 'bg-blue-50/20' : ''}`}>
       {/* Viewer Header */}
       <div className="px-5 py-4 border-b border-white/40 bg-white/60 backdrop-blur-xl flex items-center justify-between">
         <p className="text-sm font-medium tracking-wide text-slate-600">Diagnostic Viewer</p>
@@ -39,9 +39,9 @@ export const ImageViewer: React.FC<ImageViewerProps> = ({ image, imgScale, imgOf
           src={image}
           className="relative max-w-[92%] max-h-[92%] object-contain rounded-[18px] shadow-[0_20px_60px_rgba(15,23,42,0.12)] transition-transform duration-300"
           animate={{
-            scale: imgScale,
-            x: imgOffset.x,
-            y: imgOffset.y
+            scale: viewState.scale,
+            x: viewState.x,
+            y: viewState.y
           }}
           transition={{
             type: 'spring',
@@ -52,11 +52,15 @@ export const ImageViewer: React.FC<ImageViewerProps> = ({ image, imgScale, imgOf
         />
 
         {/* Zoom indicator (FIXED PREMIUM) */}
-        <div className="absolute bottom-4 right-4 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/70 backdrop-blur-md border border-white/50 shadow-[0_6px_18px_rgba(0,0,0,0.08)]">
-          <ZoomIn className="w-3.5 h-3.5 text-slate-500" />
-          <span className="text-xs font-medium text-slate-600">{imgScale.toFixed(1)}x</span>
-        </div>
+        <motion.div
+          animate={isZooming ? { scale: [1, 1.1, 1], opacity: [0.7, 1, 0.7] } : {}}
+          transition={{ duration: 1, repeat: Infinity }}
+          className="absolute bottom-4 right-4 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/70 backdrop-blur-md border border-white/50 shadow-[0_6px_18px_rgba(0,0,0,0.08)]"
+        >
+          <ZoomIn className={`w-3.5 h-3.5 ${isZooming ? 'text-blue-500' : 'text-slate-500'}`} />
+          <span className={`text-xs font-medium ${isZooming ? 'text-blue-600' : 'text-slate-600'}`}>{viewState.scale.toFixed(1)}x</span>
+        </motion.div>
       </div>
-    </>
+    </div>
   );
 };

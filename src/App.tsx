@@ -42,8 +42,7 @@ export default function App() {
 
   const [activePatientIndex, setActivePatientIndex] = useState(0);
   const [viewMode, setViewMode] = useState<'dashboard' | 'report'>('dashboard');
-  const [imgScale, setImgScale] = useState(1);
-  const [imgOffset, setImgOffset] = useState({ x: 0, y: 0 });
+  const [viewState, setViewState] = useState({ scale: 1, x: 0, y: 0 });
 
   const [currentFps, setCurrentFps] = useState(0);
   const [isTrackingLost, setIsTrackingLost] = useState(false);
@@ -73,8 +72,7 @@ export default function App() {
     setHoveredId,
     setIsClicked,
     setActivePatientIndex,
-    setImgScale,
-    setImgOffset,
+    setViewState,
     setViewMode,
     setCurrentFps,
     setIsTrackingLost,
@@ -137,8 +135,7 @@ export default function App() {
       ) : (
         <Dashboard
           activePatient={activePatient}
-          imgScale={imgScale}
-          imgOffset={imgOffset}
+          viewState={viewState}
           gesture={gesture}
           debugMode={debugMode}
           onDebugToggle={() => setDebugMode(!debugMode)}
@@ -148,8 +145,7 @@ export default function App() {
           onNextPatient={() => setActivePatientIndex(p => (p + 1) % PATIENTS.length)}
           onRunAnalysis={() => setViewMode('report')}
           onResetView={() => {
-            setImgScale(1);
-            setImgOffset({ x: 0, y: 0 });
+            setViewState({ scale: 1, x: 0, y: 0 });
           }}
           isTrackingLost={isTrackingLost}
         />
@@ -207,7 +203,12 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      <Cursor cursorRef={cursorRef} rawCursorRef={rawCursorRef} debugMode={debugMode} />
+      <Cursor
+        cursorRef={cursorRef}
+        rawCursorRef={rawCursorRef}
+        debugMode={debugMode}
+        isZooming={gesture.type === 'pinch' && viewState.scale > 1}
+      />
     </div>
   );
 }
