@@ -13,6 +13,7 @@ import { useGestureEngine } from './hooks/useGestureEngine';
 // Components
 import { CalibrationScreen } from './components/calibration/CalibrationScreen';
 import { Dashboard } from './components/dashboard/Dashboard';
+import { CinematicOverlay } from './components/dashboard/CinematicOverlay';
 import { CameraHUD } from './components/hud/CameraHUD';
 import { Cursor } from './components/hud/Cursor';
 
@@ -24,6 +25,7 @@ export default function App() {
   const [isAIReady, setIsAIReady] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
   const [systemStage, setSystemStage] = useState<'test' | 'dashboard'>('test');
+  const [showCinematic, setShowCinematic] = useState(false);
   const [stabilityScore, setStabilityScore] = useState(0);
   const [isStable, setIsStable] = useState(false);
 
@@ -53,6 +55,11 @@ export default function App() {
     1.0,
     debugMode
   );
+
+  const handleOverlayComplete = React.useCallback(() => {
+    setShowCinematic(false);
+    setSystemStage('dashboard');
+  }, []);
 
   const { handleFrame } = useGestureEngine({
     isAIReady,
@@ -92,7 +99,9 @@ export default function App() {
 
   useEffect(() => {
     if (isStable && systemStage === 'test') {
-      const timer = setTimeout(() => setSystemStage('dashboard'), 2000);
+      const timer = setTimeout(() => {
+        setShowCinematic(true);
+      }, 2000);
       return () => clearTimeout(timer);
     }
   }, [isStable, systemStage]);
@@ -115,12 +124,16 @@ export default function App() {
       <div className="fixed inset-0 bg-gradient-to-b from-[#F8FAFC] to-[#EEF2FF] -z-20" />
 
       {systemStage === 'test' ? (
-        <CalibrationScreen
-          isStable={isStable}
-          stabilityScore={stabilityScore}
-          currentFps={currentFps}
-          onAccess={() => setSystemStage('dashboard')}
-        />
+        !showCinematic && (
+          <CalibrationScreen
+            isStable={isStable}
+            stabilityScore={stabilityScore}
+            currentFps={currentFps}
+            onAccess={() => {
+              setShowCinematic(true);
+            }}
+          />
+        )
       ) : (
         <Dashboard
           activePatient={activePatient}
@@ -141,6 +154,12 @@ export default function App() {
           isTrackingLost={isTrackingLost}
         />
       )}
+
+      <AnimatePresence>
+        {showCinematic && (
+          <CinematicOverlay onComplete={handleOverlayComplete} />
+        )}
+      </AnimatePresence>
 
       {/* Persistent Mission HUD */}
       <CameraHUD
