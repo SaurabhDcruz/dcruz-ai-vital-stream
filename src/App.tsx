@@ -27,7 +27,13 @@ export default function App() {
   const [stabilityScore, setStabilityScore] = useState(0);
   const [isStable, setIsStable] = useState(false);
 
-  const [gesture, setGesture] = useState<GestureState>({ type: 'none', confidence: 0, position: { x: 0, y: 0 }, isNew: false, isEnding: false });
+  const [gesture, setGesture] = useState<GestureState>({
+    type: 'none',
+    confidence: 0,
+    position: { x: 0, y: 0 },
+    isNew: false,
+    isEnding: false
+  });
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [isClicked, setIsClicked] = useState(false);
   const [debugMode, setDebugMode] = useState(true);
@@ -43,7 +49,10 @@ export default function App() {
 
   // Initialize modular hooks
   const { hudRef, handleHUDMouseDown } = useHUDDrag();
-  const { cursorRef, rawCursorRef, targetPosRef, lastIsClicked, lastGestureType } = useCursor(1.0, debugMode);
+  const { cursorRef, rawCursorRef, targetPosRef, lastIsClicked, lastGestureType } = useCursor(
+    1.0,
+    debugMode
+  );
 
   const { handleFrame } = useGestureEngine({
     isAIReady,
@@ -73,9 +82,11 @@ export default function App() {
   useEffect(() => {
     initHandDetection()
       .then(() => setIsAIReady(true))
-      .catch((err) => {
-        console.error("[System] Hand Detection AI failed to load:", err);
-        setAiError("Failed to load hand tracking model. Please focus on fixing the failed tool call with sequential tool calls and try again. Do not do parallel tool calls and if you are fixing multiple tool calls, do them one at a time. Do not apologize. ");
+      .catch(err => {
+        console.error('[System] Hand Detection AI failed to load:', err);
+        setAiError(
+          'Failed to load hand tracking model. Please focus on fixing the failed tool call with sequential tool calls and try again. Do not do parallel tool calls and if you are fixing multiple tool calls, do them one at a time. Do not apologize. '
+        );
       });
   }, []);
 
@@ -118,10 +129,15 @@ export default function App() {
           gesture={gesture}
           debugMode={debugMode}
           onDebugToggle={() => setDebugMode(!debugMode)}
-          onPrevPatient={() => setActivePatientIndex(p => (p - 1 + PATIENTS.length) % PATIENTS.length)}
+          onPrevPatient={() =>
+            setActivePatientIndex(p => (p - 1 + PATIENTS.length) % PATIENTS.length)
+          }
           onNextPatient={() => setActivePatientIndex(p => (p + 1) % PATIENTS.length)}
           onRunAnalysis={() => setViewMode('report')}
-          onResetView={() => { setImgScale(1); setImgOffset({ x: 0, y: 0 }); }}
+          onResetView={() => {
+            setImgScale(1);
+            setImgOffset({ x: 0, y: 0 });
+          }}
           isTrackingLost={isTrackingLost}
         />
       )}
@@ -140,7 +156,12 @@ export default function App() {
 
       <AnimatePresence>
         {viewMode === 'report' && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[2000] bg-black/30 flex items-center justify-center p-6 backdrop-blur-sm">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[2000] bg-black/30 flex items-center justify-center p-6 backdrop-blur-sm"
+          >
             <motion.div
               initial={{ opacity: 0, scale: 0.96, y: 8 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -151,19 +172,23 @@ export default function App() {
               <h2 className="text-xl font-bold text-[#0F172A] mb-6">Diagnostic Summary</h2>
               <div className="bg-[#F8FAFC] rounded-xl border border-[#E2E8F0] p-5 mb-6">
                 <div className="text-base font-bold text-[#0F172A]">{activePatient.name}</div>
-                <div className="text-sm text-[#64748B] mt-1">ID: {activePatient.id.toUpperCase()} &middot; Status: {activePatient.condition}</div>
+                <div className="text-sm text-[#64748B] mt-1">
+                  ID: {activePatient.id.toUpperCase()} &middot; Status: {activePatient.condition}
+                </div>
               </div>
-              <Button data-interactive-id="btn-close-report" onClick={() => setViewMode('dashboard')} className="w-full h-11 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-colors">Close Report</Button>
+              <Button
+                data-interactive-id="btn-close-report"
+                onClick={() => setViewMode('dashboard')}
+                className="w-full h-11 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-colors"
+              >
+                Close Report
+              </Button>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <Cursor
-        cursorRef={cursorRef}
-        rawCursorRef={rawCursorRef}
-        debugMode={debugMode}
-      />
+      <Cursor cursorRef={cursorRef} rawCursorRef={rawCursorRef} debugMode={debugMode} />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { NormalizedLandmark } from "@mediapipe/tasks-vision";
+import { NormalizedLandmark } from '@mediapipe/tasks-vision';
 
 export type GestureType = 'none' | 'pinch' | 'open_palm' | 'point' | 'swipe_left' | 'swipe_right';
 
@@ -13,7 +13,7 @@ export interface GestureState {
 
 /**
  * GestureProcessor
- * 
+ *
  * Handles temporal smoothing, scale normalization, and gesture detection
  * logic on top of raw MediaPipe landmarks.
  */
@@ -44,9 +44,11 @@ export class GestureProcessor {
     } else {
       this.smoothedLandmarks = landmarks.map((lm, i) => ({
         ...lm,
-        x: this.smoothedLandmarks[i].x + (lm.x - this.smoothedLandmarks[i].x) * this.smoothingFactor,
-        y: this.smoothedLandmarks[i].y + (lm.y - this.smoothedLandmarks[i].y) * this.smoothingFactor,
-        z: this.smoothedLandmarks[i].z + (lm.z - this.smoothedLandmarks[i].z) * this.smoothingFactor,
+        x:
+          this.smoothedLandmarks[i].x + (lm.x - this.smoothedLandmarks[i].x) * this.smoothingFactor,
+        y:
+          this.smoothedLandmarks[i].y + (lm.y - this.smoothedLandmarks[i].y) * this.smoothingFactor,
+        z: this.smoothedLandmarks[i].z + (lm.z - this.smoothedLandmarks[i].z) * this.smoothingFactor
       }));
     }
 
@@ -61,10 +63,13 @@ export class GestureProcessor {
     this.gestureHistory.push(rawGesture);
     if (this.gestureHistory.length > this.maxHistory) this.gestureHistory.shift();
 
-    const counts = this.gestureHistory.reduce((acc, g) => {
-      acc[g] = (acc[g] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    const counts = this.gestureHistory.reduce(
+      (acc, g) => {
+        acc[g] = (acc[g] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
 
     let bestGesture: GestureType = 'none';
     let maxCount = 0;
@@ -90,8 +95,14 @@ export class GestureProcessor {
       isNew,
       isEnding,
       rawPinchDistance: this.getDistance(
-        { x: this.smoothedLandmarks[4].x * window.innerWidth, y: this.smoothedLandmarks[4].y * window.innerHeight, z: 0 },
-        { x: this.smoothedLandmarks[8].x * window.innerWidth, y: this.smoothedLandmarks[8].y * window.innerHeight, z: 0 }
+        {
+          x: this.smoothedLandmarks[4].x * window.innerWidth,
+          y: this.smoothedLandmarks[4].y * window.innerHeight
+        },
+        {
+          x: this.smoothedLandmarks[8].x * window.innerWidth,
+          y: this.smoothedLandmarks[8].y * window.innerHeight
+        }
       )
     };
   }
@@ -138,7 +149,7 @@ export class GestureProcessor {
     return 'none';
   }
 
-  private getDistance(p1: NormalizedLandmark, p2: NormalizedLandmark): number {
+  private getDistance(p1: { x: number; y: number }, p2: { x: number; y: number }): number {
     return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
   }
 }

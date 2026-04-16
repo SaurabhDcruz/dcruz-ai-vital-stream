@@ -17,37 +17,44 @@ It includes a **virtual cursor**, **gesture engine**, and a **hospital-style das
 ## ✨ Features
 
 ### 🎯 Real-Time Hand Tracking
+
 - 21-point hand landmark detection using MediaPipe
 - High-performance webcam pipeline
 - Smooth tracking with jitter reduction
 
 ### 🤌 Gesture Recognition
+
 - ✋ Open Palm → Reset / Back
 - 🤏 Pinch → Click / Select
 - 👉 Point → Cursor Control / Hover
 - 👈👉 Swipe → Navigation
 
 ### 🖱️ Virtual Cursor
+
 - Smooth 60 FPS cursor movement
 - Gesture-controlled interactions
 - Hover, click, and drag support
 
 ### 🏥 Hospital Dashboard
+
 - Patient navigation system
 - X-ray / scan viewer with zoom & pan
 - Gesture-based UI controls
 
 ### 🎥 Persistent Camera HUD
+
 - Live camera feed with hand skeleton overlay
 - Always visible (floating panel)
 - Real-time gesture and tracking status
 
 ### ⚡ Performance Optimized
+
 - Decoupled detection (~25 FPS) and UI rendering (60 FPS)
 - No React re-render bottlenecks
 - GPU-accelerated animations
 
 ### 🛡️ Stability Features
+
 - Tracking loss recovery
 - Landmark smoothing & buffering
 - Predictive cursor movement
@@ -73,3 +80,4 @@ Camera Feed
 → Gesture Recognition
 → Virtual Cursor
 → UI Interaction
+```
