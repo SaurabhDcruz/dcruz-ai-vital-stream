@@ -47,11 +47,13 @@ export const PatientPanel: React.FC<PatientPanelProps> = ({ activePatient, onPre
 
     return path;
   };
+
   const getECGDuration = (hr: number) => {
     return Math.max(1.8, (60 / hr) * 2.2);
   };
+
   return (
-    <div className="bg-white/70 backdrop-blur-xl rounded-3xl border border-white/60 shadow-[0_10px_40px_rgba(0,0,0,0.06)] overflow-hidden flex flex-col h-full">
+    <div className="bg-white/70 backdrop-blur-xl rounded-3xl border border-white/60 shadow-[0_10px_40px_rgba(0,0,0,0.06)] overflow-hidden flex flex-col h-full uppercase">
       {/* Header */}
       <div className="px-6 py-4 border-b border-white/40">
         <p className="text-[11px] font-semibold text-slate-500 tracking-widest uppercase">
@@ -112,9 +114,7 @@ export const PatientPanel: React.FC<PatientPanelProps> = ({ activePatient, onPre
 
           {/* REAL ECG - ADVANCED */}
           <div className="px-4 py-2 bg-white/60 backdrop-blur-md rounded-2xl border border-white/40 overflow-hidden relative">
-            {/* soft ambient glow */}
             <div className="absolute inset-0 bg-blue-500/10 blur-2xl opacity-40 pointer-events-none" />
-
             <svg className="w-full h-10" viewBox="0 0 300 40">
               <defs>
                 <linearGradient id="ecgGradient" x1="0" y1="0" x2="1" y2="0">
@@ -123,7 +123,6 @@ export const PatientPanel: React.FC<PatientPanelProps> = ({ activePatient, onPre
                   <stop offset="100%" stopColor="#2563eb" stopOpacity="0.2" />
                 </linearGradient>
               </defs>
-
               <motion.path
                 fill="none"
                 stroke="url(#ecgGradient)"
@@ -152,7 +151,6 @@ export const PatientPanel: React.FC<PatientPanelProps> = ({ activePatient, onPre
               </div>
               <span className="text-sm font-medium text-slate-600">Blood Pressure</span>
             </div>
-
             <span className="text-sm font-semibold text-[#0F172A]">
               {activePatient.vitals.bp}
               <span className="text-xs text-slate-500 ml-1">mmHg</span>
@@ -167,7 +165,6 @@ export const PatientPanel: React.FC<PatientPanelProps> = ({ activePatient, onPre
               </div>
               <span className="text-sm font-medium text-slate-600">Temperature</span>
             </div>
-
             <span className="text-sm font-semibold text-[#0F172A]">
               {activePatient.vitals.temp}
             </span>
@@ -180,7 +177,7 @@ export const PatientPanel: React.FC<PatientPanelProps> = ({ activePatient, onPre
         <button
           data-interactive-id="btn-prev"
           onClick={onPrev}
-          className="h-10 flex items-center justify-center gap-2 rounded-xl bg-white/70 backdrop-blur-md border border-white/50 text-sm font-medium text-slate-600 shadow-[0_2px_8px_rgba(0,0,0,0.05)] hover:bg-white/90 hover:text-slate-800 hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] active:scale-[0.97] transition-all duration-200"
+          className="h-10 flex items-center justify-center gap-2 rounded-xl bg-white/70 backdrop-blur-md border border-white/50 text-sm font-medium text-slate-600 shadow-[0_2px_8px_rgba(0,0,0,0.05)] hover:bg-white/90 hover:text-slate-800 transition-all active:scale-[0.97]"
         >
           <ChevronLeft className="w-4 h-4 opacity-70" />
           Prev

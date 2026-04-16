@@ -15,8 +15,7 @@ interface GestureEngineProps {
   setHoveredId: (v: string | null) => void;
   setIsClicked: (v: boolean) => void;
   setActivePatientIndex: (update: (prev: number) => number) => void;
-  setImgScale: (update: (prev: number) => number) => void;
-  setImgOffset: (update: (prev: { x: number; y: number }) => { x: number; y: number }) => void;
+  setViewState: (update: (prev: { scale: number; x: number; y: number }) => { scale: number; x: number; y: number }) => void;
   setViewMode: (v: 'dashboard' | 'report') => void;
   setCurrentFps: (v: number) => void;
   setIsTrackingLost: (v: boolean) => void;
@@ -40,8 +39,7 @@ export function useGestureEngine({
   setHoveredId,
   setIsClicked,
   setActivePatientIndex,
-  setImgScale,
-  setImgOffset,
+  setViewState,
   setViewMode,
   setCurrentFps,
   setIsTrackingLost,
@@ -60,7 +58,7 @@ export function useGestureEngine({
 
   const isProcessing = useRef(false);
   const lastDetectionTime = useRef(0);
-  const detectionInterval = 40;
+  const detectionInterval = 25; // Boosted from 40ms to 25ms (40 FPS)
   const frameCount = useRef(0);
   const lastFpsUpdate = useRef(0);
 
@@ -179,16 +177,35 @@ export function useGestureEngine({
             if (interactiveEl instanceof HTMLElement) interactiveEl.click();
           }
           if (systemStage === 'dashboard' && viewMode === 'dashboard') {
-            // ZOOM SMOOTHING (Distance based delta * 0.01)
-            const currentPinchDist = gestureState.rawPinchDistance || 0;
-            if (prevPinchDistance.current !== null) {
-              const distDelta = currentPinchDist - prevPinchDistance.current;
-              setImgScale(prev => {
-                const target = Math.max(1, Math.min(3, prev + distDelta * 0.01));
-                return prev + (target - prev) * 0.2; // 0.2 scale lerp
-              });
+            if (lastHoveredId.current === 'diagnostic-viewer') {
+              const currentPinchDist = gestureState.rawPinchDistance || 0;
+              if (prevPinchDistance.current !== null) {
+                const distDelta = currentPinchDist - prevPinchDistance.current;
+
+                setViewState(prev => {
+                  const nextScaleRaw = Math.max(1, Math.min(5, prev.scale + distDelta * 0.04));
+                  const nextScale = prev.scale + (nextScaleRaw - prev.scale) * 0.4;
+
+                  if (Math.abs(nextScale - prev.scale) < 0.001) return prev;
+
+                  const scaleRatio = nextScale / prev.scale;
+                  const viewerCenterX = window.innerWidth * 0.62;
+                  const viewerCenterY = window.innerHeight * 0.5;
+
+                  const relX = smoothX - viewerCenterX;
+                  const relY = smoothY - viewerCenterY;
+
+                  return {
+                    scale: nextScale,
+                    x: relX - (relX - prev.x) * scaleRatio,
+                    y: relY - (relY - prev.y) * scaleRatio
+                  };
+                });
+              }
+              prevPinchDistance.current = currentPinchDist;
+            } else {
+              prevPinchDistance.current = null;
             }
-            prevPinchDistance.current = currentPinchDist;
           }
         } else {
           if (lastIsClicked.current) {
@@ -203,9 +220,10 @@ export function useGestureEngine({
             if (lastPanPos.current) {
               const dx = smoothX - lastPanPos.current.x;
               const dy = smoothY - lastPanPos.current.y;
-              setImgOffset(prev => ({
-                x: prev.x + dx * 0.5,
-                y: prev.y + dy * 0.5
+              setViewState(prev => ({
+                ...prev,
+                x: prev.x + dx * 0.6, // Increased pan sensitivity slightly
+                y: prev.y + dy * 0.6
               }));
             }
             lastPanPos.current = { x: smoothX, y: smoothY };
@@ -218,8 +236,7 @@ export function useGestureEngine({
             setActivePatientIndex(prev => (prev - 1 + patientCount) % patientCount);
           if (gestureState.type === 'open_palm' && gestureState.isNew) {
             setViewMode('dashboard');
-            setImgScale(() => 1);
-            setImgOffset(() => ({ x: 0, y: 0 }));
+            setViewState({ scale: 1, x: 0, y: 0 });
           }
         }
 

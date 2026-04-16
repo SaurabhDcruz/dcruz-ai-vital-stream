@@ -19,8 +19,8 @@ export interface GestureState {
  */
 export class GestureProcessor {
   private history: NormalizedLandmark[][] = [];
-  private readonly maxHistory = 8;
-  private readonly smoothingFactor = 0.6;
+  private readonly maxHistory = 6;
+  private readonly smoothingFactor = 0.45;
   private smoothedLandmarks: NormalizedLandmark[] = [];
 
   // Gesture stability state
@@ -28,7 +28,7 @@ export class GestureProcessor {
   private currentGesture: GestureType = 'none';
   private previousGesture: GestureType = 'none';
   private gestureConfidence = 0;
-  private readonly confidenceThreshold = 4; // Must be detected in 4/8 frames
+  private readonly confidenceThreshold = 3;
 
   // Swipe detection state
   private lastSwipeTime = 0;
@@ -128,7 +128,7 @@ export class GestureProcessor {
 
     // 2. Pinch Detection (Thumb tip 4 + Index tip 8)
     const pinchDist = this.getDistance(lm[4], lm[8]) / scale;
-    if (pinchDist < 0.4) return 'pinch';
+    if (pinchDist < 0.45) return 'pinch';
 
     // 3. Finger Extension Checks
     const isIndexExtended = lm[8].y < lm[6].y;
