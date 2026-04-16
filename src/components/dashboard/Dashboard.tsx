@@ -41,13 +41,13 @@ export const Dashboard: React.FC<DashboardProps> = ({
             <AnimatePresence>
                 {isTrackingLost && (
                     <motion.div
-                        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                        initial={{ opacity: 0, y: -20, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                        exit={{ opacity: 0, y: -10, scale: 0.95 }}
                         transition={{ duration: 0.25, ease: "easeOut" }}
                         className="
                             fixed 
-                            bottom-3 sm:bottom-6 
+                            top-[80px]
                             left-1/2 -translate-x-1/2 
                             z-[10001]
 
