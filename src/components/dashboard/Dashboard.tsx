@@ -4,6 +4,7 @@ import { Activity, Cpu, Settings } from 'lucide-react';
 import { PatientPanel } from './PatientPanel';
 import { ImageViewer } from './ImageViewer';
 import { ActionPanel } from './ActionPanel';
+import { Footer } from './Footer';
 import { Patient } from '../../constants/patients';
 import { GestureState } from '../../services/gestureService';
 
@@ -35,7 +36,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
   isTrackingLost
 }) => {
   return (
-    <div className="w-full h-full flex flex-col bg-[#F8FAFC]">
+    <div className="w-full h-screen flex flex-col bg-[#F8FAFC] overflow-hidden">
       {/* Header */}
       <header className="sticky top-0 z-[1000] w-full bg-white border-b border-[#E2E8F0] px-6 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -106,6 +107,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   );
 };
