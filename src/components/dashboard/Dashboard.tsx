@@ -37,65 +37,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
     return (
         <div className="w-full h-full flex flex-col bg-[#F8FAFC]">
 
-            {/* Tracking Lost Alert — soft inline banner */}
-            <AnimatePresence>
-                {isTrackingLost && (
-                    <motion.div
-                        initial={{ opacity: 0, y: -20, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                        transition={{ duration: 0.25, ease: "easeOut" }}
-                        className="
-                            fixed 
-                            top-[80px]
-                            left-1/2 -translate-x-1/2 
-                            z-[10001]
-
-                            flex items-center gap-2 sm:gap-3
-
-                            px-3 sm:px-5 
-                            py-2 sm:py-3
-
-                            rounded-xl sm:rounded-2xl
-
-                            bg-red-50/80 backdrop-blur-xl
-                            border border-red-200/60
-
-                            shadow-[0_6px_25px_rgba(239,68,68,0.15)]
-
-                            max-w-[90%] sm:max-w-md
-                            w-auto
-                        "
-                    >
-                        {/* Status Dot */}
-                        <div className="
-                w-4 h-4 sm:w-5 sm:h-5 
-                rounded-full 
-                bg-red-100 
-                flex items-center justify-center 
-                flex-shrink-0
-            ">
-                            <div className="
-                    w-1.5 h-1.5 sm:w-2 sm:h-2 
-                    bg-red-500 
-                    rounded-full 
-                    animate-pulse
-                " />
-                        </div>
-
-                        {/* Text */}
-                        <span className="
-                text-[12px] sm:text-sm 
-                font-medium 
-                text-red-600 
-                leading-tight
-                text-center sm:text-left
-            ">
-                            Tracking lost. Please keep your hand visible.
-                        </span>
-                    </motion.div>
-                )}
-            </AnimatePresence>
 
             {/* Header */}
             <header className="sticky top-0 z-[1000] w-full bg-white border-b border-[#E2E8F0] px-6 py-3 flex items-center justify-between">
