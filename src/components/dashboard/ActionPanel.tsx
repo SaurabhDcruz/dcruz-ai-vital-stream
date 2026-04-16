@@ -19,68 +19,52 @@ export const ActionPanel: React.FC<ActionPanelProps> = ({
             bg-white/60 backdrop-blur-xl
             border-t border-white/30
         ">
-            {/* LEFT SIDE */}
-            <div className="flex items-center gap-3">
 
-                {/* RUN ANALYSIS (PRIMARY) */}
+            {/* BUTTON GROUP */}
+            <div className="grid grid-cols-2 gap-3 w-full sm:w-auto">
+
+                {/* RUN */}
                 <button
                     data-interactive-id="btn-report"
                     onClick={onRunAnalysis}
                     className="
-                        flex items-center gap-2
-
-                        px-4 sm:px-5 py-2.5
-                        rounded-xl
-
-                        bg-blue-600 text-white
-                        text-sm font-semibold
-
-                        shadow-[0_6px_16px_rgba(37,99,235,0.35)]
-
-                        hover:bg-blue-700
-                        hover:shadow-[0_10px_24px_rgba(37,99,235,0.4)]
-
+                        h-10 flex items-center justify-center gap-2 
+                        rounded-xl 
+                        bg-blue-600 text-white text-sm font-medium
+                        shadow-[0_4px_12px_rgba(37,99,235,0.3)]
+                        hover:bg-blue-700 
                         active:scale-[0.97]
-
                         transition-all duration-200
                     "
                 >
                     <BarChart2 className="w-4 h-4" />
-                    Run Analysis
+                    Run
                 </button>
 
-                {/* RESET (SECONDARY GLASS BUTTON) */}
+                {/* RESET */}
                 <button
                     data-interactive-id="btn-reset"
                     onClick={onReset}
                     className="
-                        flex items-center gap-2
-
-                        px-4 sm:px-5 py-2.5
-                        rounded-xl
-
+                        h-10 flex items-center justify-center gap-2 
+                        rounded-xl 
                         bg-white/70 backdrop-blur-md
                         border border-white/50
-
                         text-sm font-medium text-slate-600
-
                         shadow-[0_2px_8px_rgba(0,0,0,0.05)]
-
                         hover:bg-white/90
                         hover:text-slate-800
                         hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)]
-
                         active:scale-[0.97]
-
                         transition-all duration-200
                     "
                 >
                     <RotateCcw className="w-4 h-4 opacity-70" />
-                    Reset View
+                    Reset
                 </button>
             </div>
 
-            {/* RIGHT SIDE (OPTIONAL FUTURE STATUS) */}
+            {/* STATUS */}
             <div className="hidden sm:flex items-center text-xs text-slate-400">
                 Analysis ready
             </div>
